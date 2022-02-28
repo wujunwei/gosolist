@@ -1,10 +1,26 @@
 package gosolist
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+)
 
 type Compare func(a, b interface{}) bool
 
+var IntsCompare Compare = func(a, b interface{}) bool {
+	return a.(int) < b.(int)
+}
+
+var StringsCompare Compare = func(a, b interface{}) bool {
+	return a.(string) < b.(string)
+}
+
 type ForEach func(index int, a interface{})
+
+//PrintEach for debug usage
+var PrintEach ForEach = func(index int, a interface{}) {
+	fmt.Printf("index: %d, value: %v", index, a)
+}
 
 // Container is base interface that all data structures implement.
 type Container interface {

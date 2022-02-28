@@ -12,9 +12,7 @@ func BenchmarkListGet(b *testing.B) {
 }
 
 func TestList(t *testing.T) {
-	l := SortedList{c: func(a, b interface{}) bool {
-		return a.(int) < b.(int)
-	}}
+	l := NewSortedList(IntsCompare, 0)
 	l.Insert(1)
 	l.Insert(34)
 	l.Insert(23)
@@ -23,5 +21,7 @@ func TestList(t *testing.T) {
 	l.Insert(423)
 	fmt.Println(l.Values())
 	fmt.Println(l.DeleteItem(34))
-	fmt.Println(l.Values())
+	fmt.Println(l.At(3))
+	l.Delete(3)
+	fmt.Println(l.At(3))
 }
