@@ -1,18 +1,22 @@
 package gosolist
 
 import (
-	"fmt"
-	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestList(t *testing.T) {
-	l := NewSortedList(IntsCompare, 50)
-	for i := 0; i < 3000; i++ {
-		l.Push(rand.Int() % 10000)
-		if i%100 == 0 {
-			fmt.Println(l.At(i))
+	l := NewSortedList(IntsCompare, 2000)
+	most := int64(0)
+	index := 0
+	for i := 10000; i < 60000; i++ {
+		start := time.Now().UnixNano()
+		l.Push(i / 10000)
+		end := time.Now().UnixNano()
+		if start-end > most {
+			most = start - end
+			index = i
 		}
 	}
-	fmt.Println(l.Values())
+	t.Log(l.At(30000), index, most)
 }

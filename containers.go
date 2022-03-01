@@ -46,8 +46,12 @@ func InSort(l []interface{}, c Compare, a interface{}) []interface{} {
 	if index == len(l) {
 		return append(l, a)
 	}
-	return append(l[:index], append([]interface{}{a}, l[index:]...)...)
+	l = append(l, nil)
+	copy(l[index+1:], l[index:len(l)-1])
+	l[index] = a
+	return l
 }
+
 func RemoveSort(l []interface{}, c Compare, a interface{}) ([]interface{}, bool) {
 	index := BisectRight(l, c, a)
 	remove := l[index] == a

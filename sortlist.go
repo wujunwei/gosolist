@@ -21,7 +21,10 @@ func (l *SortedList) Push(a interface{}) {
 		l.lists = append(l.lists, []interface{}{a})
 		return
 	}
-	pos := BisectLeft(l.maxes, l.c, a)
+	pos := BisectRight(l.maxes, l.c, a)
+	if pos > 0 && l.maxes[pos-1] == a {
+		pos--
+	}
 	if pos == len(l.maxes) {
 		pos--
 		l.maxes[pos] = a
