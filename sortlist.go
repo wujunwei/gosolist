@@ -14,7 +14,7 @@ type SortedList struct {
 	c       Compare
 }
 
-func (l *SortedList) Insert(a interface{}) {
+func (l *SortedList) Push(a interface{}) {
 	l.size++
 	if len(l.maxes) == 0 {
 		l.maxes = append(l.maxes, a)
@@ -64,10 +64,13 @@ func (l *SortedList) Delete(index int) {
 	} else if index == l.size-1 {
 		pos = len(l.lists) - 1
 		in = len(l.lists[pos]) - 1
-	} else if len(l.indexes) == 0 {
-		l.buildIndex()
+	} else {
+		if len(l.indexes) == 0 {
+			l.buildIndex()
+		}
 		pos, in = l.findPos(index)
 	}
+	l.size--
 	l.lists[pos] = append(l.lists[pos][:in], l.lists[pos][in+1:]...)
 	if len(l.lists[pos]) == 0 {
 		l.maxes = append(l.maxes[:pos], l.maxes[pos+1:]...)
@@ -111,6 +114,7 @@ func (l *SortedList) Each(f ForEach) {
 	for _, list := range l.lists {
 		for _, j := range list {
 			f(i, j)
+			i++
 		}
 	}
 }
@@ -150,30 +154,40 @@ func (l *SortedList) fresh(pos int) {
 		half := append([]interface{}{}, l.lists[pos][halfLen:]...)
 		l.lists[pos] = l.lists[pos][:halfLen]
 		l.lists = append(l.lists[:pos+1], append([][]interface{}{half}, l.lists[pos+1:]...)...)
+		// update max
+		l.maxes[pos] = l.lists[pos][halfLen-1]
+		l.maxes = append(l.maxes[:pos+1], append([]interface{}{l.lists[pos+1][len(l.lists[pos+1])-1]}, l.maxes[pos+1:]...)...)
 		l.resetIndex()
 	} else {
+		l.maxes[pos] = l.lists[pos][listPosLen-1]
 		l.updateIndex(pos, 1)
 	}
 }
 
 func (l *SortedList) buildIndex() {
 	n := len(l.lists)
-	indexLens := (n * (n + 1)) >> 1
-	l.offset = indexLens - n
+	rowLens := roundUpOf2((n + 1) / 2)
+	l.offset = rowLens*2 - 1
+	indexLens := l.offset + n
+
 	indexes := make([]int, indexLens)
-	for i, list := range l.lists {
+	for i, list := range l.lists { // fill row0
 		indexes[len(indexes)-n+i] = len(list)
 	}
 
-	length := n - 1
-	last := indexLens - n - length
-	for length > 0 {
-		for i := 0; i < length; i++ {
-			indexes[last+i] = indexes[last+length+i] + indexes[last+length+i+1]
+	last := indexLens - n - rowLens
+	for rowLens > 0 {
+		for i := 0; i < rowLens; i++ {
+			if (last+i)*2+2 >= indexLens {
+				indexes[last+i] = indexes[(last+i)*2+1]
+				break
+			}
+			indexes[last+i] = indexes[(last+i)*2+1] + indexes[(last+i)*2+2]
 		}
-		length--
-		last -= length
+		rowLens >>= 1
+		last -= rowLens
 	}
+	l.indexes = indexes
 }
 
 func (l *SortedList) updateIndex(pos, incr int) {
@@ -199,7 +213,6 @@ func (l *SortedList) findPos(index int) (int, int) {
 		indexChild := l.indexes[child]
 		if index < indexChild {
 			pos = child
-
 		} else {
 			index -= indexChild
 			pos = child + 1
@@ -215,8 +228,20 @@ func (l *SortedList) resetIndex() {
 }
 
 func NewSortedList(c Compare, loadFactor int) SortedList {
-	if loadFactor <= 10 {
+	if loadFactor <= 0 {
 		loadFactor = DefaultLoadFactor
 	}
 	return SortedList{load: loadFactor, c: c}
+}
+
+func roundUpOf2(a int) int {
+	if a&(a-1) == 0 {
+		return a
+	}
+	a--
+	a |= a >> 1
+	a |= a >> 2
+	a |= a >> 8
+	a |= a >> 16
+	return a + 1
 }

@@ -19,7 +19,7 @@ type ForEach func(index int, a interface{})
 
 //PrintEach for debug usage
 var PrintEach ForEach = func(index int, a interface{}) {
-	fmt.Printf("index: %d, value: %v", index, a)
+	fmt.Printf("index: %d, value: %v \n", index, a)
 }
 
 // Container is base interface that all data structures implement.
