@@ -32,6 +32,11 @@ type Container interface {
 
 func BisectRight(l []interface{}, c Compare, target interface{}) int {
 	return sort.Search(len(l), func(i int) bool {
+		return !c(l[i], target)
+	})
+}
+func BisectLeft(l []interface{}, c Compare, target interface{}) int {
+	return sort.Search(len(l), func(i int) bool {
 		return l[i] == target || !c(l[i], target)
 	})
 }

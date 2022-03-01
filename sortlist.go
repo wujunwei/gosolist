@@ -21,7 +21,7 @@ func (l *SortedList) Push(a interface{}) {
 		l.lists = append(l.lists, []interface{}{a})
 		return
 	}
-	pos := BisectRight(l.maxes, l.c, a)
+	pos := BisectLeft(l.maxes, l.c, a)
 	if pos == len(l.maxes) {
 		pos--
 		l.maxes[pos] = a
@@ -37,7 +37,7 @@ func (l *SortedList) DeleteItem(a interface{}) bool {
 		return false
 	}
 	l.size--
-	pos := BisectRight(l.maxes, l.c, a)
+	pos := BisectLeft(l.maxes, l.c, a)
 	if pos == len(l.maxes) {
 		return false
 	}
@@ -102,6 +102,9 @@ func (l *SortedList) At(index int) interface{} {
 	if index == l.size-1 {
 		return l.maxes[len(l.maxes)-1]
 	}
+	//if l.size-index <= len(l.lists[len(l.lists)-1]) {
+	//	return l.lists[len(l.lists)-1][l.size-index-1]
+	//}
 	if len(l.indexes) == 0 {
 		l.buildIndex()
 	}
@@ -123,11 +126,11 @@ func (l *SortedList) Has(a interface{}) bool {
 	if l.size == 0 {
 		return false
 	}
-	pos := BisectRight(l.maxes, l.c, a)
+	pos := BisectLeft(l.maxes, l.c, a)
 	if pos == len(l.maxes) {
 		return false
 	}
-	index := BisectRight(l.lists[pos], l.c, a)
+	index := BisectLeft(l.lists[pos], l.c, a)
 	return l.lists[pos][index] == a
 }
 
@@ -178,6 +181,9 @@ func (l *SortedList) buildIndex() {
 	last := indexLens - n - rowLens
 	for rowLens > 0 {
 		for i := 0; i < rowLens; i++ {
+			if (last+i)*2+1 >= indexLens {
+				break
+			}
 			if (last+i)*2+2 >= indexLens {
 				indexes[last+i] = indexes[(last+i)*2+1]
 				break
@@ -227,21 +233,16 @@ func (l *SortedList) resetIndex() {
 	l.offset = 0
 }
 
+func roundUpOf2(a int) int {
+	i := 1
+	for ; i < a; i <<= 1 {
+	}
+	return i
+}
+
 func NewSortedList(c Compare, loadFactor int) SortedList {
 	if loadFactor <= 0 {
 		loadFactor = DefaultLoadFactor
 	}
 	return SortedList{load: loadFactor, c: c}
-}
-
-func roundUpOf2(a int) int {
-	if a&(a-1) == 0 {
-		return a
-	}
-	a--
-	a |= a >> 1
-	a |= a >> 2
-	a |= a >> 8
-	a |= a >> 16
-	return a + 1
 }
