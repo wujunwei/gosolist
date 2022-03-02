@@ -137,6 +137,48 @@ func (l *SortedList) Has(a interface{}) bool {
 	return l.lists[pos][index] == a
 }
 
+func (l *SortedList) Floor(a interface{}) interface{} {
+	if l.size == 0 {
+		return nil
+	}
+	pos := BisectLeft(l.maxes, l.c, a)
+	if pos == len(l.maxes) {
+		return l.maxes[pos-1]
+	}
+	index := BisectLeft(l.lists[pos], l.c, a)
+	if index == 0 && l.lists[pos][0] != a {
+		if pos == 0 {
+			return nil
+		} else {
+			return l.maxes[pos-1]
+		}
+	}
+	return l.lists[pos][index]
+}
+
+func (l *SortedList) Ceil(a interface{}) interface{} {
+	if l.size == 0 {
+		return nil
+	}
+	pos := BisectLeft(l.maxes, l.c, a)
+	if pos == len(l.maxes) {
+		return nil
+	}
+	index := BisectRight(l.lists[pos], l.c, a)
+	if index == len(l.lists[pos]) {
+		return nil
+	}
+	if index > 0 && l.lists[pos][index-1] == a {
+		return a
+	}
+	return l.lists[pos][index]
+}
+
+//todo
+//func (l *SortedList) Index(a interface{}) (int, bool) {
+//
+//}
+
 func (l *SortedList) Empty() bool {
 	return l.size == 0
 }

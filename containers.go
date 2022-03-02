@@ -7,11 +7,11 @@ import (
 
 type Compare func(a, b interface{}) bool
 
-var IntsCompare Compare = func(a, b interface{}) bool {
+var IntCompare Compare = func(a, b interface{}) bool {
 	return a.(int) < b.(int)
 }
 
-var StringsCompare Compare = func(a, b interface{}) bool {
+var StringCompare Compare = func(a, b interface{}) bool {
 	return a.(string) < b.(string)
 }
 
@@ -20,14 +20,6 @@ type ForEach func(index int, a interface{})
 //PrintEach for debug usage
 var PrintEach ForEach = func(index int, a interface{}) {
 	fmt.Printf("index: %d, value: %v \n", index, a)
-}
-
-// Container is base interface that all data structures implement.
-type Container interface {
-	Empty() bool
-	Size() int
-	Clear()
-	Values() []interface{}
 }
 
 func BisectRight(l []interface{}, c Compare, target interface{}) int {
