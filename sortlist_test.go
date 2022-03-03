@@ -25,13 +25,16 @@ func TestList(t *testing.T) {
 			temp := l.At(rand.Int() % l.Size())
 			if !l.Has(temp) {
 				t.Log("function 'has' is not correct")
+				t.Fail()
 			}
 			if rand.Int()%10 == 9 {
 				if !l.DeleteItem(temp) {
 					t.Log("function deleteItem is not correct")
+					t.Fail()
 				}
 				if l.Has(temp) {
 					t.Log("function has is not correct")
+					t.Fail()
 				}
 			}
 		}
@@ -44,7 +47,7 @@ func TestList(t *testing.T) {
 			index = i
 		}
 	}
-	t.Log(l.At(30000), index, most)
+	t.Log(l.Size(), index, most)
 }
 
 func TestFloor(t *testing.T) {

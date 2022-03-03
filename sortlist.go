@@ -174,10 +174,28 @@ func (l *SortedList) Ceil(a interface{}) interface{} {
 	return l.lists[pos][index]
 }
 
-//todo
-//func (l *SortedList) Index(a interface{}) (int, bool) {
-//
-//}
+//Index return the index of the position where the item to insert,and if the item exist or not.
+func (l *SortedList) Index(a interface{}) (int, bool) { //todo  test case
+	if l.size == 0 {
+		return 0, false
+	}
+	pos := BisectLeft(l.maxes, l.c, a)
+	if pos == len(l.maxes) {
+		return l.size, false
+	}
+	if a == l.lists[0][0] {
+		return 0, true
+	}
+	if a == l.maxes[0] {
+		return len(l.lists[0]) - 1, true
+	}
+	if a == l.maxes[len(l.maxes)-1] {
+		return l.size - 1, true
+	}
+	index := BisectRight(l.lists[pos], l.c, a)
+	exist := index < len(l.lists[pos]) && l.lists[pos][index] == a
+	return l.locate(pos, index), exist
+}
 
 func (l *SortedList) Empty() bool {
 	return l.size == 0
@@ -273,6 +291,20 @@ func (l *SortedList) findPos(index int) (int, int) {
 	return pos - l.offset, index
 }
 
+func (l *SortedList) locate(pos, index int) int {
+	if len(l.indexes) == 0 {
+		l.buildIndex()
+	}
+	total := 0
+	pos += l.offset
+	for pos > 0 {
+		if pos&1 == 0 {
+			total += l.indexes[pos-1]
+		}
+		pos = (pos - 1) >> 1
+	}
+	return total + index
+}
 func (l *SortedList) resetIndex() {
 	l.indexes = []int{}
 	l.offset = 0
