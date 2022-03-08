@@ -213,6 +213,20 @@ func (l *SortedList) Clear() {
 	l.size = 0
 }
 
+func (l *SortedList) Top() interface{} {
+	if l.size == 0 {
+		return nil
+	}
+	return l.maxes[len(l.maxes)-1]
+}
+
+func (l *SortedList) Bottom() interface{} {
+	if l.size == 0 {
+		return nil
+	}
+	return l.lists[0][0]
+}
+
 // fresh update the index and rebuild basic array if the load is greater than load factor after insert
 func (l *SortedList) fresh(pos int) {
 	listPosLen := len(l.lists[pos])
