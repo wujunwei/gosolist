@@ -1,7 +1,3 @@
 # gosolist
-A sorted list data struct of go which can be insert update delete at O(n) . Inspired by python's sortedcontainers
+Inspired by python's sortedcontainers. A sorted list data struct of go which can be insert update delete search in O(log(n)) .
 
-
-## todo:
-- push 优化
-- delete 优化

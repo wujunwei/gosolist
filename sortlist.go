@@ -21,7 +21,7 @@ func (l *SortedList) Push(a interface{}) {
 		l.lists = append(l.lists, []interface{}{a})
 		return
 	}
-	pos := BisectRight(l.maxes, l.c, a)
+	pos := BisectLeft(l.maxes, l.c, a)
 	if pos > 0 && l.maxes[pos-1] == a {
 		pos--
 	}
@@ -39,13 +39,17 @@ func (l *SortedList) DeleteItem(a interface{}) bool {
 	if l.size == 0 {
 		return false
 	}
-	l.size--
+
 	pos := BisectLeft(l.maxes, l.c, a)
 	if pos == len(l.maxes) {
 		return false
 	}
+
 	var removed bool
 	l.lists[pos], removed = RemoveSort(l.lists[pos], l.c, a)
+	if removed {
+		l.size--
+	}
 	if len(l.lists[pos]) == 0 {
 		l.maxes = append(l.maxes[:pos], l.maxes[pos+1:]...)
 		l.lists = append(l.lists[:pos], l.lists[pos+1:]...)
@@ -153,7 +157,10 @@ func (l *SortedList) Floor(a interface{}) interface{} {
 			return l.maxes[pos-1]
 		}
 	}
-	return l.lists[pos][index]
+	if l.lists[pos][index] == a {
+		return l.lists[pos][index]
+	}
+	return l.lists[pos][index-1]
 }
 
 func (l *SortedList) Ceil(a interface{}) interface{} {
@@ -164,18 +171,12 @@ func (l *SortedList) Ceil(a interface{}) interface{} {
 	if pos == len(l.maxes) {
 		return nil
 	}
-	index := BisectRight(l.lists[pos], l.c, a)
-	if index == len(l.lists[pos]) {
-		return nil
-	}
-	if index > 0 && l.lists[pos][index-1] == a {
-		return a
-	}
+	index := BisectLeft(l.lists[pos], l.c, a)
 	return l.lists[pos][index]
 }
 
 //Index return the index of the position where the item to insert,and if the item exist or not.
-func (l *SortedList) Index(a interface{}) (int, bool) { //todo  test case
+func (l *SortedList) Index(a interface{}) (int, bool) {
 	if l.size == 0 {
 		return 0, false
 	}
@@ -192,7 +193,7 @@ func (l *SortedList) Index(a interface{}) (int, bool) { //todo  test case
 	if a == l.maxes[len(l.maxes)-1] {
 		return l.size - 1, true
 	}
-	index := BisectRight(l.lists[pos], l.c, a)
+	index := BisectLeft(l.lists[pos], l.c, a)
 	exist := index < len(l.lists[pos]) && l.lists[pos][index] == a
 	return l.locate(pos, index), exist
 }

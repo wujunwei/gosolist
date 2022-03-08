@@ -38,9 +38,6 @@ func TestList(t *testing.T) {
 				}
 			}
 		}
-		if rand.Int()%200 == 0 {
-			l.Delete(rand.Int() % l.Size())
-		}
 		end := time.Now().UnixNano()
 		if end-start > most {
 			most = end - start
@@ -51,7 +48,7 @@ func TestList(t *testing.T) {
 }
 
 func TestFloor(t *testing.T) {
-	l := NewSortedList(IntCompare, 3)
+	l := NewSortedList(IntCompare, 2)
 	var a []int
 	for i := 0; i < 10; i++ {
 		r := rand.Int() % 10000
@@ -63,6 +60,23 @@ func TestFloor(t *testing.T) {
 		t.Fail()
 	}
 	fmt.Println(a, l.Values())
+	fmt.Println(l.Floor(a[1] + 1))
 	fmt.Println(l.Floor(a[0]), l.Floor(a[0]-1), l.Ceil(a[0]-1))
-	fmt.Println(l.Ceil(a[9]), l.Ceil(a[9]+1), l.Floor(a[9]-1))
+	fmt.Println(l.Ceil(a[9]), l.Ceil(a[9]+1), l.Floor(a[9]+1))
+}
+
+func TestIndex(t *testing.T) {
+	l := NewSortedList(IntCompare, 3)
+	var a []int
+	for i := 0; i < 50; i++ {
+		r := rand.Int() % 10000
+		a = append(a, r)
+		l.Push(r)
+	}
+	sort.Ints(a)
+	fmt.Println(a)
+	for i := 0; i < len(a); i++ {
+		fmt.Println(l.Index(a[i] + 1))
+		fmt.Println(l.Index(a[i]))
+	}
 }
