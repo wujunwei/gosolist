@@ -47,9 +47,10 @@ func (l *SortedList) DeleteItem(a interface{}) bool {
 
 	var removed bool
 	l.lists[pos], removed = RemoveSort(l.lists[pos], l.c, a)
-	if removed {
-		l.size--
+	if !removed {
+		return removed
 	}
+	l.size--
 	if len(l.lists[pos]) == 0 {
 		// delete maxes at pos
 		copy(l.maxes[pos:], l.maxes[pos+1:])

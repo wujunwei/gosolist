@@ -18,6 +18,7 @@ var IntCompare Compare = func(a, b interface{}) int {
 	return 0
 }
 
+//StringCompare string compare default
 var StringCompare Compare = func(a, b interface{}) int {
 	aa, bb := a.(string), b.(string)
 	if aa > bb {
@@ -60,7 +61,7 @@ func InSort(l []interface{}, c Compare, a interface{}) []interface{} {
 
 func RemoveSort(l []interface{}, c Compare, a interface{}) ([]interface{}, bool) {
 	index := BisectRight(l, c, a)
-	if index == len(l) || index == 0 {
+	if index == 0 {
 		return l, false
 	}
 	if l[index-1] == a {

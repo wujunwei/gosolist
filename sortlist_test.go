@@ -80,3 +80,12 @@ func TestIndex(t *testing.T) {
 		fmt.Println(l.Index(a[i]))
 	}
 }
+
+func TestDelete(t *testing.T) {
+	l := NewSortedList(IntCompare, 100)
+	l.Push(1)
+	l.Push(5)
+	l.Push(9)
+	fmt.Println(l.DeleteItem(9))
+	l.Each(PrintEach)
+}
