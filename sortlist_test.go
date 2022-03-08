@@ -50,7 +50,7 @@ func TestList(t *testing.T) {
 func TestFloor(t *testing.T) {
 	l := NewSortedList(IntCompare, 2)
 	var a []int
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 20; i++ {
 		r := rand.Int() % 10000
 		a = append(a, r)
 		l.Push(r)

@@ -51,8 +51,13 @@ func (l *SortedList) DeleteItem(a interface{}) bool {
 		l.size--
 	}
 	if len(l.lists[pos]) == 0 {
-		l.maxes = append(l.maxes[:pos], l.maxes[pos+1:]...)
-		l.lists = append(l.lists[:pos], l.lists[pos+1:]...)
+		// delete maxes at pos
+		copy(l.maxes[pos:], l.maxes[pos+1:])
+		l.maxes = l.maxes[:len(l.maxes)-1]
+
+		// delete lists at pos
+		copy(l.lists[pos:], l.lists[pos+1:])
+		l.lists = l.lists[:len(l.lists)-1]
 		l.resetIndex()
 	} else {
 		l.maxes[pos] = l.lists[pos][len(l.lists[pos])-1]
@@ -78,10 +83,14 @@ func (l *SortedList) Delete(index int) {
 		pos, in = l.findPos(index)
 	}
 	l.size--
-	l.lists[pos] = append(l.lists[pos][:in], l.lists[pos][in+1:]...)
+	l.lists[pos] = Remove(l.lists[pos], in)
 	if len(l.lists[pos]) == 0 {
-		l.maxes = append(l.maxes[:pos], l.maxes[pos+1:]...)
-		l.lists = append(l.lists[:pos], l.lists[pos+1:]...)
+		// delete maxes at pos
+		l.maxes = Remove(l.maxes, pos)
+
+		// delete lists at pos
+		copy(l.lists[pos:], l.lists[pos+1:])
+		l.lists = l.lists[:len(l.lists)-1]
 		l.resetIndex()
 	} else {
 		l.maxes[pos] = l.lists[pos][len(l.lists[pos])-1]
@@ -234,10 +243,14 @@ func (l *SortedList) fresh(pos int) {
 		halfLen := listPosLen >> 1
 		half := append([]interface{}{}, l.lists[pos][halfLen:]...)
 		l.lists[pos] = l.lists[pos][:halfLen]
-		l.lists = append(l.lists[:pos+1], append([][]interface{}{half}, l.lists[pos+1:]...)...)
+		l.lists = append(l.lists, nil)
+		copy(l.lists[pos+2:], l.lists[pos+1:])
+		l.lists[pos+1] = half
 		// update max
 		l.maxes[pos] = l.lists[pos][halfLen-1]
-		l.maxes = append(l.maxes[:pos+1], append([]interface{}{l.lists[pos+1][len(l.lists[pos+1])-1]}, l.maxes[pos+1:]...)...)
+		l.maxes = append(l.maxes, nil)
+		copy(l.maxes[pos+2:], l.maxes[pos+1:])
+		l.maxes[pos+1] = l.lists[pos+1][len(l.lists[pos+1])-1]
 		l.resetIndex()
 	} else {
 		l.maxes[pos] = l.lists[pos][listPosLen-1]

@@ -63,9 +63,13 @@ func RemoveSort(l []interface{}, c Compare, a interface{}) ([]interface{}, bool)
 	if index == len(l) || index == 0 {
 		return l, false
 	}
-	remove := l[index-1] == a
-	if remove {
-		l = append(l[:index-1], l[index:]...)
+	if l[index-1] == a {
+		return Remove(l, index-1), true
 	}
-	return l, remove
+	return l, false
+}
+
+func Remove(l []interface{}, index int) []interface{} {
+	copy(l[index:], l[index+1:])
+	return l[:len(l)-1]
 }
