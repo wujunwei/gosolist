@@ -113,8 +113,8 @@ func (l *SortedList) At(index int) interface{} {
 	if index >= l.size {
 		return nil
 	}
-	if index == 0 {
-		return l.lists[0][0]
+	if index < len(l.lists[0]) {
+		return l.lists[0][index]
 	}
 	if index == l.size-1 {
 		return l.maxes[len(l.maxes)-1]
