@@ -89,3 +89,35 @@ func TestDelete(t *testing.T) {
 	fmt.Println(l.DeleteItem(9))
 	l.Each(PrintEach)
 }
+
+func BenchmarkPush(b *testing.B) {
+	l := NewSortedList(IntCompare, 2000)
+	for n := 0; n < b.N; n++ {
+		l.Push(n + n/2)
+	}
+
+}
+
+func BenchmarkIndex(b *testing.B) {
+	l := NewSortedList(IntCompare, 2000)
+	for n := 0; n < 1000000; n++ {
+		l.Push(rand.Int() % 100000)
+	}
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		l.Index(n)
+	}
+}
+
+func BenchmarkDelete(b *testing.B) {
+	l := NewSortedList(IntCompare, 2000)
+	for n := 0; n < 1000000; n++ {
+		l.Push(rand.Int() % 100000)
+	}
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		if l.Size() > 0 {
+			l.DeleteItem(n)
+		}
+	}
+}
