@@ -13,10 +13,7 @@ func init() {
 }
 func TestList(t *testing.T) {
 	l := NewSortedList(IntCompare, 2000)
-	most := int64(0)
-	index := 0
 	for i := 1; i < 60000; i++ {
-		start := time.Now().UnixNano()
 		a := rand.Int() % 10000000
 		if !l.Has(a) {
 			l.Push(a)
@@ -38,13 +35,12 @@ func TestList(t *testing.T) {
 				}
 			}
 		}
-		end := time.Now().UnixNano()
-		if end-start > most {
-			most = end - start
-			index = i
-		}
 	}
-	t.Log(l.Size(), index, most)
+	l.Delete(0)
+	l.Delete(1)
+	l.Delete(l.Size())
+	l.Delete(l.Size() - 1)
+	t.Log(l.Size())
 }
 
 func TestFloor(t *testing.T) {
@@ -85,9 +81,12 @@ func TestDelete(t *testing.T) {
 	l := NewSortedList(IntCompare, 100)
 	l.Push(1)
 	l.Push(5)
+	fmt.Println(l.Top(), l.Bottom())
 	l.Push(9)
 	fmt.Println(l.DeleteItem(9))
 	l.Each(PrintEach)
+	l.Clear()
+	fmt.Println(l.Empty())
 }
 
 func BenchmarkPush(b *testing.B) {
