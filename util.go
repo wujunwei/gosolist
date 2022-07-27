@@ -37,17 +37,21 @@ var PrintEach ForEach = func(index int, a interface{}) {
 	fmt.Printf("index: %d, value: %v \n", index, a)
 }
 
+//BisectRight bisect search right most element
 func BisectRight(l []interface{}, c Compare, target interface{}) int {
 	return sort.Search(len(l), func(i int) bool {
 		return c(l[i], target) > 0
 	})
 }
+
+//BisectLeft bisect search left most element
 func BisectLeft(l []interface{}, c Compare, target interface{}) int {
 	return sort.Search(len(l), func(i int) bool {
 		return c(l[i], target) >= 0
 	})
 }
 
+//InSort insert element at the suitable location in a sorted slice
 func InSort(l []interface{}, c Compare, a interface{}) []interface{} {
 	index := BisectRight(l, c, a)
 	if index == len(l) {
@@ -59,6 +63,7 @@ func InSort(l []interface{}, c Compare, a interface{}) []interface{} {
 	return l
 }
 
+//RemoveSort remove element at the suitable location in a sorted slice
 func RemoveSort(l []interface{}, c Compare, a interface{}) ([]interface{}, bool) {
 	index := BisectRight(l, c, a)
 	if index == 0 {
